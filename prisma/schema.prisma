@@ -1,16 +1,12 @@
-
-
-generator client{
-    provider = "prisma-client-js"
+generator client {
+  provider = "prisma-client-js"
 }
 
-datasource db{
-    provider = "postgresql"
+datasource db {
+  provider = "postgresql"
 }
 
-
-
-enum Role{
+enum Role {
   CITIZEN
   VILLAGE_LEADER
   CELL_LEADER
@@ -19,55 +15,82 @@ enum Role{
   SUPER_ADMIN
 }
 
-model User{
-    id String @id @default(cuid())
-    name String
-    email String @unique
-    password String
-    phone String?
-    villageId String?
-    village Village? @relation(fields: [villageId],references: [id])
-    role Role @default (CITIZEN)
-    createdAt DateTime @default(now())
-    updateAt DateTime @updatedAt
+model User {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
+  phone    String?
+
+  districtId String?
+  district   District? @relation(fields: [districtId], references: [id])
+
+  sectorId String?
+  sector   Sectors? @relation(fields: [sectorId], references: [id])
+
+  cellId String?
+  cell   Cell? @relation(fields: [cellId], references: [id])
+
+  villageId String?
+  village   Village? @relation(fields: [villageId], references: [id])
+
+  role Role @default(CITIZEN)
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
-model District{
-    id String @id @default(cuid())
-    name String @unique
-    sectors Sectors[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-model Sectors{
-id String @id
-name String
-districtId String
-district District @relation(fields: [districtId],references: [id])
-cells Cell[]
-createdAt DateTime @default(now())
-updateAt DateTime @updatedAt
-@@unique([name,districtId])
+model District {
+  id      String @id @default(cuid())
+  name    String @unique
+
+  sectors Sectors[]
+  users   User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Cell{
-    id String @id @default(cuid())
-    name String
-    SectorId String
-    Sector Sectors @relation(fields: [SectorId],references: [id])
-    village Village[]
-createdAt DateTime @default(now())
-updateAt DateTime @updatedAt
-@@unique([name,SectorId])
+model Sectors {
+  id         String @id @default(cuid())
+  name       String
+  districtId String
+
+  district District @relation(fields: [districtId], references: [id])
+  cells    Cell[]
+  users    User[]
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@unique([name, districtId])
+}
+
+model Cell {
+  id       String @id @default(cuid())
+  name     String
+  SectorId String
+
+  Sector  Sectors   @relation(fields: [SectorId], references: [id])
+  village Village[]
+  users   User[]
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  @@unique([name, SectorId])
 }
 
 model Village {
-  id        String   @id @default(cuid())
-  name      String
-  cellId    String
-  cell      Cell      @relation(fields: [cellId], references: [id])
-  users     User[]
+  id     String @id @default(cuid())
+  name   String
+  cellId String
+
+  cell  Cell   @relation(fields: [cellId], references: [id])
+  users User[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@unique([name, cellId])
 }
