@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service.js';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -62,11 +63,16 @@ export class AuthService {
       data: {
         name: dto.name,
         email: dto.email,
-         villageId:dto.villageId,
+        villageId:dto.villageId,
         password: hashedPassword,
-       
+        role:Role.CITIZEN,
+        cellId:village.cell.id, //Get the ID of the Cell where this user's village is located.
+        sectorId:village.cell.Sector.id,
+        districtId:village.cell.Sector.district.id,     
       },
     });
+
+    console.log("registration succesfull")
 
     // Do not return password
     const { password, ...result } = user;
