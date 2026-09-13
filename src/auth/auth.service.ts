@@ -1,17 +1,14 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 
 import { RegisterDto } from './dto/register.dto.js';
-
 import { JwtService } from '@nestjs/jwt';
-
 import { PrismaService } from '../prisma.service.js';
-
 import { MailerService } from '@nestjs-modules/mailer';
-
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -34,6 +31,29 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
+    //find the village
+
+    const village=await this.prisma.village.findUnique({
+      where:{
+        id:dto.villageId
+      },
+      include:{
+        cell:{
+          include:{
+            Sector:{
+              include:{
+                district:true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!village) {
+      throw new BadRequestException("invalid village")
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -42,7 +62,9 @@ export class AuthService {
       data: {
         name: dto.name,
         email: dto.email,
+         villageId:dto.villageId,
         password: hashedPassword,
+       
       },
     });
 
