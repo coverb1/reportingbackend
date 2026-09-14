@@ -21,21 +21,17 @@ model User {
   email    String @unique
   password String
   phone    String?
-
   districtId String?
   district   District? @relation(fields: [districtId], references: [id])
-
   sectorId String?
   sector   Sectors? @relation(fields: [sectorId], references: [id])
-
   cellId String?
   cell   Cell? @relation(fields: [cellId], references: [id])
-
   villageId String?
   village   Village? @relation(fields: [villageId], references: [id])
-
   role Role @default(CITIZEN)
-
+  resetToken      String?
+  resetTokenExpiry DateTime?
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 }

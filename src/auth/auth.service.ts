@@ -1,10 +1,5 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-
+import {BadRequestException,ConflictException,Injectable,UnauthorizedException,} from '@nestjs/common';
+import { randomBytes } from 'node:crypto';
 import { RegisterDto } from './dto/register.dto.js';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service.js';
@@ -116,4 +111,52 @@ export class AuthService {
       accessToken: token,
     };
   }
+
+  async forgotpassword(email:string){
+    const user=await this.prisma.user.findUnique({
+      where:{email}
+    })
+    if (!user) {
+      throw new UnauthorizedException("user does not exist")
+    }
+
+const token=randomBytes(32).toString('hex')
+await this.prisma.user.update({
+  where:{email},
+  data:{
+    resetToken:token,
+    resetTokenExpiry:new Date(Date.now()+1000*60*10)
+  }
+})
+const resetLink=`http://localhost:3001/ResertPassword?token=${token}`;
+await this.mailerservice.sendMail({
+  to:email,
+  subject:"reset password",
+  text:`click this link  to resert Password: ${resetLink}`
+})
+  }
+
+  async ResetPasswod(token:string,newPassword:string){
+    const user=await this.prisma.user.findFirst({
+      where:{
+      resetToken:token,
+      resetTokenExpiry:{gt:new Date()}
+      }
+    })
+    console.log(`$user is:${user}`)
+     if (!user) {
+    throw new BadRequestException('Token is invalid or expired')
+  }
+   const hashedPassword=await bcrypt.hash(newPassword,20)
+
+  await this.prisma.user.update({
+    where:{id:user.id},
+    data:{
+      password:hashedPassword,
+      resetToken:null,
+      resetTokenExpiry:null
+    }
+  })
+  }
+
 }
