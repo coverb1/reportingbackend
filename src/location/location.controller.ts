@@ -11,8 +11,13 @@ getDistricts(){
 }
 
 @Get('districts/:districtId/sectors')
-getCellSector(@Param('sectorId')sectorId:string){
+getCellSector(@Param('districtId')sectorId:string){
     return this.locationservice.getSectorByDistrict(sectorId)
+}
+
+@Get('sectors/:sectorId/cells')
+getCellsBySector(@Param('sectorId') sectorId: string) {
+  return this.locationservice.getCellBysector(sectorId);
 }
 
 @Get('cells/:cellId/villages')
