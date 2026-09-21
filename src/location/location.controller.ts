@@ -12,7 +12,7 @@ getDistricts(){
 
 @Get('districts/:districtId/sectors')
 getCellSector(@Param('districtId')sectorId:string){
-    return this.locationservice.getSectorByDistrict(sectorId)
+    return this.locationservice.getSectorByDistrict(sectorId) //Get the districtId from the URL, but store it inside a variable called sectorId
 }
 
 @Get('sectors/:sectorId/cells')

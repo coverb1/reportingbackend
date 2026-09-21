@@ -61,11 +61,10 @@ export class AuthService {
         password: hashedPassword,
         role: Role.CITIZEN,
         cellId: village.cell.id, //Get the ID of the Cell where this user's village is located.
-        sectorId: village.cell.Sector.id,
+        sectorId: village.cell.Sector.id, //Go from the village → its cell → its sector, and get the sector's ID.
         districtId: village.cell.Sector.district.id,
       },
     });
-
     console.log("registration succesfull")
 
     // Do not return password
