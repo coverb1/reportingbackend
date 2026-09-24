@@ -27,8 +27,7 @@ forgotPassword(@Body("email") email:string){
  @Post('reset-password')
 resetPassword(
   @Body('token') token: string,
-  @Body('newPassword') newPassword: string,
-) {
+  @Body('newPassword') newPassword: string,) {
   return this.authService.ResetPasswod(token, newPassword);
 }
 @UseGuards(AuthGuard('jwt'))
