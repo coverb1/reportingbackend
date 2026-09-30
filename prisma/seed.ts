@@ -423,10 +423,191 @@ async function main() {
   console.log('Creating Super Admin...');
 
 
-  const hashedPassword = await bcrypt.hash(
-    'Admin@12345',
+  console.log('');
+  console.log('Creating Leadership Users...');
+
+
+  // VILLAGE LEADER
+  const villageLeaderPassword = await bcrypt.hash(
+    'Village@12345',
     10,
   );
+
+  const villageLeaderVillage = await prisma.village.findFirst({
+    where: {
+      name: 'Ruhangare',
+    },
+    include: {
+      cell: {
+        include: {
+          Sector: {
+            include: {
+              district: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (villageLeaderVillage) {
+    const villageLeader = await prisma.user.upsert({
+      where: {
+        email: 'village.leader@civicreporting.com',
+      },
+
+      update: {},
+
+      create: {
+        name: 'Test Village Leader',
+        email: 'village.leader@civicreporting.com',
+        password: villageLeaderPassword,
+        role: Role.VILLAGE_LEADER,
+
+        villageId: villageLeaderVillage.id,
+        cellId: villageLeaderVillage.cell.id,
+        sectorId: villageLeaderVillage.cell.Sector.id,
+        districtId: villageLeaderVillage.cell.Sector.district.id,
+      },
+    });
+
+    console.log(
+      `Village Leader: ${villageLeader.email}`,
+    );
+  }
+
+
+ 
+  // CELL LEADER
+ 
+
+  const cellLeaderPassword = await bcrypt.hash(
+    'Cell@12345',
+    10,
+  );
+
+  const cellLeaderCell = await prisma.cell.findFirst({
+    where: {
+      name: 'Bwiza',
+    },
+    include: {
+      Sector: {
+        include: {
+          district: true,
+        },
+      },
+    },
+  });
+
+  if (cellLeaderCell) {
+    const cellLeader = await prisma.user.upsert({
+      where: {
+        email: 'cell.leader@civicreporting.com',
+      },
+
+      update: {},
+
+      create: {
+        name: 'Test Cell Leader',
+        email: 'cell.leader@civicreporting.com',
+        password: cellLeaderPassword,
+        role: Role.CELL_LEADER,
+
+        cellId: cellLeaderCell.id,
+        sectorId: cellLeaderCell.Sector.id,
+        districtId: cellLeaderCell.Sector.district.id,
+      },
+    });
+
+    console.log(
+      `Cell Leader: ${cellLeader.email}`,
+    );
+  }
+
+
+
+  // SECTOR LEADER
+
+
+  const sectorLeaderPassword = await bcrypt.hash(
+    'Sector@12345',
+    10,
+  );
+
+  const sectorLeaderSector = await prisma.sectors.findFirst({
+    where: {
+      name: 'Ndera',
+      district: {
+        name: 'Gasabo',
+      },
+    },
+    include: {
+      district: true,
+    },
+  });
+
+  if (sectorLeaderSector) {
+    const sectorLeader = await prisma.user.upsert({
+      where: {
+        email: 'sector.leader@civicreporting.com',
+      },
+
+      update: {},
+
+      create: {
+        name: 'Test Sector Leader',
+        email: 'sector.leader@civicreporting.com',
+        password: sectorLeaderPassword,
+        role: Role.SECTOR_LEADER,
+
+        sectorId: sectorLeaderSector.id,
+        districtId: sectorLeaderSector.district.id,
+      },
+    });
+
+    console.log(
+      `Sector Leader: ${sectorLeader.email}`,
+    );
+  }
+
+
+
+  // DISTRICT ADMIN
+
+
+  const districtAdminPassword = await bcrypt.hash(
+    'District@12345',
+    10,
+  );
+
+  const districtAdminDistrict = await prisma.district.findUnique({
+    where: {
+      name: 'Gasabo',
+    },
+  });
+
+  if (districtAdminDistrict) {
+    const districtAdmin = await prisma.user.upsert({
+      where: {
+        email: 'district.admin@civicreporting.com',
+      },
+
+      update: {},
+
+      create: {
+        name: 'Test District Admin',
+        email: 'district.admin@civicreporting.com',
+        password: districtAdminPassword,
+        role: Role.DISTRICT_ADMIN,
+
+        districtId: districtAdminDistrict.id,
+      },
+    });
+
+    console.log(
+      `District Admin: ${districtAdmin.email}`,
+    );
+  }
 
 
   const admin = await prisma.user.upsert({
@@ -443,7 +624,7 @@ async function main() {
 
       email: 'admin@civicreporting.com',
 
-      password: hashedPassword,
+      password: villageLeaderPassword,
 
       role: Role.SUPER_ADMIN,
     },
