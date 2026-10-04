@@ -6,6 +6,41 @@ datasource db {
   provider = "postgresql"
 }
 
+
+// =========================
+// REPORT ENUMS
+// =========================
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  FORWARDED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum ReportPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ReportCategory {
+  ROADS
+  WATER
+  STREET_LIGHTING
+  WASTE
+  DRAINAGE
+  PUBLIC_INFRASTRUCTURE
+}
+
+
+// =========================
+// USER ROLES
+// =========================
+
 enum Role {
   CITIZEN
   VILLAGE_LEADER
@@ -15,37 +50,102 @@ enum Role {
   SUPER_ADMIN
 }
 
+
+// =========================
+// USER
+// =========================
+
 model User {
   id       String @id @default(cuid())
   name     String
   email    String @unique
   password String
   phone    String?
+
   districtId String?
   district   District? @relation(fields: [districtId], references: [id])
+
   sectorId String?
   sector   Sectors? @relation(fields: [sectorId], references: [id])
+
   cellId String?
   cell   Cell? @relation(fields: [cellId], references: [id])
+
   villageId String?
   village   Village? @relation(fields: [villageId], references: [id])
+
   role Role @default(CITIZEN)
-  resetToken      String?
+
+  resetToken       String?
   resetTokenExpiry DateTime?
+
+  reports Report[]
+
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 }
 
-model District {
-  id      String @id @default(cuid())
-  name    String @unique
 
-  sectors Sectors[]
-  users   User[]
+// =========================
+// REPORT
+// =========================
+
+model Report {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+
+  category ReportCategory
+  status   ReportStatus   @default(PENDING)
+  priority ReportPriority @default(MEDIUM)
+
+  specificLocation String?
+  isPublic         Boolean @default(true)
+  photoUrl         String?
+
+  // Citizen who created the report
+  citizenId String
+  citizen   User @relation(fields: [citizenId], references: [id])
+
+  // Location hierarchy
+  districtId String
+  district   District @relation(fields: [districtId], references: [id])
+
+  sectorId String
+  sector   Sectors @relation(fields: [sectorId], references: [id])
+
+  cellId String
+  cell   Cell @relation(fields: [cellId], references: [id])
+
+  villageId String
+  village   Village @relation(fields: [villageId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+
+// =========================
+// DISTRICT
+// =========================
+
+model District {
+  id   String @id @default(cuid())
+  name String @unique
+
+  sectors Sectors[]
+  users   User[]
+  reports Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+// =========================
+// SECTOR
+// =========================
 
 model Sectors {
   id         String @id @default(cuid())
@@ -53,14 +153,21 @@ model Sectors {
   districtId String
 
   district District @relation(fields: [districtId], references: [id])
-  cells    Cell[]
-  users    User[]
+
+  cells  Cell[]
+  users  User[]
+  reports Report[]
 
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updateAt  DateTime @updatedAt
 
   @@unique([name, districtId])
 }
+
+
+// =========================
+// CELL
+// =========================
 
 model Cell {
   id       String @id @default(cuid())
@@ -70,6 +177,7 @@ model Cell {
   Sector  Sectors   @relation(fields: [SectorId], references: [id])
   village Village[]
   users   User[]
+  reports Report[]
 
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
@@ -77,13 +185,19 @@ model Cell {
   @@unique([name, SectorId])
 }
 
+
+// =========================
+// VILLAGE
+// =========================
+
 model Village {
   id     String @id @default(cuid())
   name   String
   cellId String
 
-  cell  Cell   @relation(fields: [cellId], references: [id])
-  users User[]
+  cell    Cell     @relation(fields: [cellId], references: [id])
+  users   User[]
+  reports Report[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
