@@ -7,10 +7,6 @@ datasource db {
 }
 
 
-// =========================
-// REPORT ENUMS
-// =========================
-
 enum ReportStatus {
   PENDING
   UNDER_REVIEW
