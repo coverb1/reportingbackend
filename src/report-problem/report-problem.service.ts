@@ -7,6 +7,21 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ReportProblemService {
+  create(createReportProblemDto: CreateReportProblemDto) {
+    throw new Error('Method not implemented.');
+  }
+  findAll() {
+    throw new Error('Method not implemented.');
+  }
+  findOne(arg0: number) {
+    throw new Error('Method not implemented.');
+  }
+  update(arg0: number, updateReportProblemDto: UpdateReportProblemDto) {
+    throw new Error('Method not implemented.');
+  }
+  remove(arg0: number) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
      private jwtservice: JwtService,
         private prisma: PrismaService,
@@ -24,7 +39,7 @@ export class ReportProblemService {
 throw new UnauthorizedException("Citizen Not Found")
     }
 
-if (!citizen.districtId ||citizen.sectorId|| citizen.cellId|| !citizen.villageId) {
+if (!citizen.districtId ||!citizen.sectorId|| !citizen.cellId|| !citizen.villageId) {
   throw new BadRequestException(
     'Please complete your location before submitting a report',
   )
@@ -32,7 +47,9 @@ if (!citizen.districtId ||citizen.sectorId|| citizen.cellId|| !citizen.villageId
 
 // 3. Create the report// 3. Create the report
 const report = await this.prisma.report.create({
+
       data: {
+
         title: dto.title,
         description: dto.description,
         category: dto.category,
