@@ -1,12 +1,18 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException,UploadedFile } from '@nestjs/common';
 import { CreateReportProblemDto } from './dto/create-report-problem.dto.js';
 import { UpdateReportProblemDto } from './dto/update-report-problem.dto.js';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service.js';
 import { MailerService } from '@nestjs-modules/mailer';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path, { extname } from 'node:path';
 
 @Injectable()
 export class ReportProblemService {
+
+
+  //  upload  image 
   create(createReportProblemDto: CreateReportProblemDto) {
     throw new Error('Method not implemented.');
   }
@@ -22,6 +28,7 @@ export class ReportProblemService {
   remove(arg0: number) {
     throw new Error('Method not implemented.');
   }
+
   constructor(
      private jwtservice: JwtService,
         private prisma: PrismaService,
@@ -44,6 +51,9 @@ if (!citizen.districtId ||!citizen.sectorId|| !citizen.cellId|| !citizen.village
     'Please complete your location before submitting a report',
   )
 }
+
+
+
 
 // 3. Create the report// 3. Create the report
 const report = await this.prisma.report.create({
@@ -68,5 +78,7 @@ const report = await this.prisma.report.create({
         priority: 'MEDIUM',
       },
     });
+    console.log(report)
    }
+  
 }

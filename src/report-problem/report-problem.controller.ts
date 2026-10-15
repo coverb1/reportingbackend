@@ -7,7 +7,7 @@ import { UpdateReportProblemDto } from './dto/update-report-problem.dto.js';
 export class ReportProblemController {
   constructor(private readonly reportProblemService: ReportProblemService) {}
 
-  @Post()
+  @Post("/report/problem")
   create(@Body() createReportProblemDto: CreateReportProblemDto) {
     return this.reportProblemService.create(createReportProblemDto);
   }
