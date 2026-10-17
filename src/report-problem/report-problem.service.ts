@@ -4,9 +4,7 @@ import { UpdateReportProblemDto } from './dto/update-report-problem.dto.js';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service.js';
 import { MailerService } from '@nestjs-modules/mailer';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import path, { extname } from 'node:path';
+
 
 @Injectable()
 export class ReportProblemService {
