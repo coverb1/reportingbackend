@@ -9,25 +9,25 @@ import { PrismaService } from '../prisma.service.js';
 import { JwtStrategy } from './jwt.strategy.js';
 
 @Module({
-  imports:[
+  imports: [
     PassportModule,
     JwtModule.register({
-      secret:authaconstants.secrete,
-      signOptions:{expiresIn:'1D'}
+      secret: authaconstants.secrete,
+      signOptions: { expiresIn: '1D' }
     }),
 
     MailerModule.forRoot({
-         transport:{
-        host:'smtp.gmail.com',
-        port:587,
-        auth:{
-          user:'cboy85096@gmail.com',
-pass:'zbzu rcii nqoy yxkd'
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        auth: {
+          user: 'cboy85096@gmail.com',
+          pass: 'zbzu rcii nqoy yxkd'
         }
       }
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService,PrismaService,JwtStrategy],
+  providers: [AuthService, PrismaService, JwtStrategy],
 })
-export class AuthModule {}
+export class AuthModule { }

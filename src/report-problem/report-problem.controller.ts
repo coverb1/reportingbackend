@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import {Controller,Post,Body,UseGuards,UseInterceptors,UploadedFile,BadRequestException,} from '@nestjs/common';
+
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { randomUUID } from 'crypto';
+
 import { ReportProblemService } from './report-problem.service.js';
 import { CreateReportProblemDto } from './dto/create-report-problem.dto.js';
-import { UpdateReportProblemDto } from './dto/update-report-problem.dto.js';
+import { currentUser } from '../auth/me/current-user.decorator.js';
+import { jwtAuthGuard } from '../auth/jwt-guard.js';
 
 @Controller('report-problem')
 export class ReportProblemController {
-  constructor(private readonly reportProblemService: ReportProblemService) {}
+  constructor(
+    private readonly reportProblemService: ReportProblemService,
+  ) {}
 
-  @Post("/report/problem")
-  create(@Body() createReportProblemDto: CreateReportProblemDto) {
-    return this.reportProblemService.create(createReportProblemDto);
-  }
+  @UseGuards(jwtAuthGuard)
+  @Post('/ReportProblem')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const uniqueName = randomUUID() + extname(file.originalname);
+          callback(null, uniqueName);
+        },
+      }),
+      limits: {
+        fileSize: 5 * 1024 * 1024,
+      },
+      fileFilter: (req, file, callback) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return callback(
+            new BadRequestException('Only image files are allowed'),
+            false,
+          );
+        }
 
-  @Get()
-  findAll() {
-    return this.reportProblemService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reportProblemService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReportProblemDto: UpdateReportProblemDto) {
-    return this.reportProblemService.update(+id, updateReportProblemDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reportProblemService.remove(+id);
+        callback(null, true);
+      },
+    }),
+  )
+  Myreport(
+    @Body() createReportProblemDto: CreateReportProblemDto,
+    @UploadedFile() file: Express.Multer.File,
+    @currentUser() user: { userId: string },
+  ) {
+    return this.reportProblemService.Myreport(
+      user.userId,
+      createReportProblemDto,
+      file,
+    );
   }
 }

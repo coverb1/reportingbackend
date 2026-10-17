@@ -10,38 +10,21 @@ import path, { extname } from 'node:path';
 
 @Injectable()
 export class ReportProblemService {
-
-
-  //  upload  image 
-  create(createReportProblemDto: CreateReportProblemDto) {
-    throw new Error('Method not implemented.');
-  }
-  findAll() {
-    throw new Error('Method not implemented.');
-  }
-  findOne(arg0: number) {
-    throw new Error('Method not implemented.');
-  }
-  update(arg0: number, updateReportProblemDto: UpdateReportProblemDto) {
-    throw new Error('Method not implemented.');
-  }
-  remove(arg0: number) {
-    throw new Error('Method not implemented.');
-  }
-
   constructor(
      private jwtservice: JwtService,
         private prisma: PrismaService,
         private mailerservice: MailerService,
   ){}
-   async Myreport(userId:string,dto:CreateReportProblemDto){
-    //here we ar finding loggedIn user
+   async Myreport(userId: string, dto: CreateReportProblemDto, file: Express.Multer.File){
+    
     const citizen=await this.prisma.user.findUnique(
       {
         where:{id:userId}
+        
       }
+      
     )
-
+console.log(userId)
     if (!citizen) {
 throw new UnauthorizedException("Citizen Not Found")
     }
@@ -51,11 +34,6 @@ if (!citizen.districtId ||!citizen.sectorId|| !citizen.cellId|| !citizen.village
     'Please complete your location before submitting a report',
   )
 }
-
-
-
-
-// 3. Create the report// 3. Create the report
 const report = await this.prisma.report.create({
 
       data: {
@@ -78,7 +56,7 @@ const report = await this.prisma.report.create({
         priority: 'MEDIUM',
       },
     });
-    console.log(report)
+   return report
    }
   
 }
