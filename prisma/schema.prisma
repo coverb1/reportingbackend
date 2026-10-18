@@ -47,10 +47,6 @@ enum Role {
 }
 
 
-// =========================
-// USER
-// =========================
-
 model User {
   id       String @id @default(cuid())
   name     String
@@ -81,10 +77,6 @@ model User {
   updateAt  DateTime @updatedAt
 }
 
-
-// =========================
-// REPORT
-// =========================
 
 model Report {
   id String @id @default(cuid())
@@ -120,11 +112,6 @@ model Report {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-
-// =========================
-// DISTRICT
-// =========================
 
 model District {
   id   String @id @default(cuid())

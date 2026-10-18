@@ -32,7 +32,8 @@ export class AuthController {
   }
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
-  getMe(@currentUser() user: { id: number, name: string, role: string }) {
+  getMe(@currentUser() user: { 
+    id: number, name: string, role: string }) {
     return user
   }
 }

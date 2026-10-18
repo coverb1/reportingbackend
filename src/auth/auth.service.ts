@@ -108,12 +108,26 @@ export class AuthService {
     if (!passwordIsCorrect) {
       throw new UnauthorizedException('Invalid email or password');
     }
+    const UserWithLocation = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        district: true,
+        sector: true,
+        cell: true,
+        village: true
+      }
+    })
 
     //Create JWT token
     const token = this.jwtservice.sign({
       sub: user.id,
       email: user.email,
       role: user.role,
+
+      district: UserWithLocation?.district?.name,
+      sector: UserWithLocation?.sector?.name,
+      cell: UserWithLocation?.cell?.name,
+      village: UserWithLocation?.village?.name,
     });
 
     // Return token
@@ -148,48 +162,48 @@ export class AuthService {
     })
   }
 
-async ResetPasswod(token: string, newPassword: string) {
-  console.log("TOKEN RECEIVED:", token);
-  console.log("CURRENT TIME:", new Date());
+  async ResetPasswod(token: string, newPassword: string) {
+    console.log("TOKEN RECEIVED:", token);
+    console.log("CURRENT TIME:", new Date());
 
-  // 1. Find user using the reset token only
-  const user = await this.prisma.user.findFirst({
-    where: {
-      resetToken: token,
-    },
-  });
+    // 1. Find user using the reset token only
+    const user = await this.prisma.user.findFirst({
+      where: {
+        resetToken: token,
+      },
+    });
 
-  console.log("USER FOUND:", user);
+    console.log("USER FOUND:", user);
 
-  if (!user) {
-    throw new BadRequestException("Invalid reset token");
+    if (!user) {
+      throw new BadRequestException("Invalid reset token");
+    }
+
+    console.log("RESET TOKEN IN DB:", user.resetToken);
+    console.log("RESET TOKEN EXPIRY:", user.resetTokenExpiry);
+
+    // 2. Check expiry
+    if (!user.resetTokenExpiry || user.resetTokenExpiry <= new Date()) {
+      throw new BadRequestException("Reset token has expired");
+    }
+
+    // 3. Hash password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // 4. Update password
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    return {
+      message: "Password reset successfully",
+    };
   }
-
-  console.log("RESET TOKEN IN DB:", user.resetToken);
-  console.log("RESET TOKEN EXPIRY:", user.resetTokenExpiry);
-
-  // 2. Check expiry
-  if (!user.resetTokenExpiry || user.resetTokenExpiry <= new Date()) {
-    throw new BadRequestException("Reset token has expired");
-  }
-
-  // 3. Hash password
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  // 4. Update password
-  await this.prisma.user.update({
-    where: {
-      id: user.id,
-    },
-    data: {
-      password: hashedPassword,
-      resetToken: null,
-      resetTokenExpiry: null,
-    },
-  });
-
-  return {
-    message: "Password reset successfully",
-  };
-}
 }

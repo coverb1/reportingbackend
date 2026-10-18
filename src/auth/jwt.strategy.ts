@@ -20,11 +20,16 @@ async validate(palyload:any){
   const capitalized = firstName.charAt(0).toUpperCase() + firstName.slice(1);
     return{
       userId: palyload.sub,
-      email: palyload.email,
-      name: capitalized
-    }
+    email: palyload.email,
+    name: capitalized,
+    role: palyload.role,
+    district: palyload.district,
+    sector: palyload.sector,
+    cell: palyload.cell,
+    village: palyload.village,
 }
-}
+}}
+
 // Main job of JwtStrategy
 
 // reads token
