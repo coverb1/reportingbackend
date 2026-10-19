@@ -56,5 +56,4 @@ const report = await this.prisma.report.create({
     });
    return report
    }
-  
 }

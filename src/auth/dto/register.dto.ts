@@ -1,8 +1,15 @@
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  Length,
+  Matches,
+} from 'class-validator';
 
-import {IsEmail, IsNotEmpty, IsString, MinLength} from 'class-validator'
-export class RegisterDto{
-@IsNotEmpty()
- @IsString()
+export class RegisterDto {
+  @IsNotEmpty()
+  @IsString()
   name: string;
 
   @IsEmail()
@@ -10,11 +17,18 @@ export class RegisterDto{
   email: string;
 
   @IsString()
+  @IsNotEmpty()
   @MinLength(6)
   password: string;
 
   @IsString()
   @IsNotEmpty()
+  @Length(10, 10, {
+    message: 'Phone number must contain exactly 10 digits',
+  })
+  @Matches(/^[0-9]{10}$/, {
+    message: 'Phone number must contain only digits',
+  })
   phone: string;
 
   @IsString()

@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { authaconstants } from "./auth.constants.js";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -13,22 +13,23 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
     });
   }
 
-async validate(palyload:any){
-  const namePart=palyload.email.split('@')[0]
-  const lettersOnly=namePart.match(/^[a-zA-Z]+/)
-  const firstName = lettersOnly ? lettersOnly[0] : namePart;
-  const capitalized = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-    return{
+  async validate(palyload: any) {
+    const namePart = palyload.email.split('@')[0]
+    const lettersOnly = namePart.match(/^[a-zA-Z]+/)
+    const firstName = lettersOnly ? lettersOnly[0] : namePart;
+    const capitalized = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    return {
       userId: palyload.sub,
-    email: palyload.email,
-    name: capitalized,
-    role: palyload.role,
-    district: palyload.district,
-    sector: palyload.sector,
-    cell: palyload.cell,
-    village: palyload.village,
+      email: palyload.email,
+      name: capitalized,
+      role: palyload.role,
+      district: palyload.district,
+      sector: palyload.sector,
+      cell: palyload.cell,
+      village: palyload.village,
+    }
+  }
 }
-}}
 
 // Main job of JwtStrategy
 
@@ -48,7 +49,7 @@ async validate(palyload:any){
 //    ↓
 // NestJS attaches it to request.user
 //    ↓
-// Controller reads request.user 
+// Controller reads request.user
 
 
 //  mainly this chekcks what inside the token

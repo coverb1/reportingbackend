@@ -109,6 +109,9 @@ model Report {
   villageId String
   village   Village @relation(fields: [villageId], references: [id])
 
+  // assignedLeaderId String?
+  // assignedLeader  User? @relation( "")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
