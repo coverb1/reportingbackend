@@ -40,7 +40,7 @@ const report = await this.prisma.report.create({
         description: dto.description,
         category: dto.category,
         specificLocation: dto.specificLocation,
-        isPublic: dto.isPublic ?? true,
+        // isPublic: dto.isPublic ?? true,
         photoUrl: dto.photoUrl,
 
         // Get the citizen's identity and location from the database

@@ -89,7 +89,6 @@ model Report {
   priority ReportPriority @default(MEDIUM)
 
   specificLocation String?
-  isPublic         Boolean @default(true)
   photoUrl         String?
 
   // Citizen who created the report

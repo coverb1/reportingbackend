@@ -14,7 +14,7 @@ export class UploadController {
 
   @Post('image')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('photo', {
       storage: diskStorage({
         destination: './uploads',
         filename: (req, file, callback) => {
