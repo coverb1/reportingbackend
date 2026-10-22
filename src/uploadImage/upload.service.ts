@@ -5,14 +5,14 @@ import path from 'path';
 @Injectable()
 
 export class UploadService{
-    uploadImage(photo:Express.Multer.File){
-        if (!photo) {
+    uploadImage(file:Express.Multer.File){
+        if (!file) {
             throw new BadRequestException("Please select an Image")
         }
         return{
             message:"Image upload successfully",
-            filename:photo.filename,
-            path:`upload/${photo.filename}`
+            filename:file.filename,
+            path:`upload/${file.filename}`
         }
     }
 }

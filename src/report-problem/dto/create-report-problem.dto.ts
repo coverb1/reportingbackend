@@ -27,9 +27,6 @@ export class CreateReportProblemDto {
   @MaxLength(255)
   specificLocation?: string;
 
-  @IsOptional()
-  @IsBoolean()
-  isPublic?: boolean;
 
   @IsOptional()
   @IsString()
