@@ -57,6 +57,7 @@ export class AuthService {
       data: {
         name: dto.name,
         email: dto.email,
+        phone:dto.phone,
         villageId: dto.villageId,
         password: hashedPassword,
         role: Role.CITIZEN,
@@ -66,7 +67,6 @@ export class AuthService {
       },
     });
     console.log("registration succesfull")
-
     // Do not return password
     const { password, ...result } = user;
 

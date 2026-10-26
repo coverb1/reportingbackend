@@ -1,11 +1,6 @@
 
 import {
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,} from 'class-validator';
+  IsBoolean,IsEnum,IsNotEmpty,IsOptional,IsString,MaxLength,} from 'class-validator';
 import { ReportCategory } from '@prisma/client';
 
 export class CreateReportProblemDto {

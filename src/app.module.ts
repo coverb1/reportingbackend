@@ -5,9 +5,6 @@ import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
 import { LocationModule } from './location/location.module.js';
 import { ReportProblemModule } from './report-problem/report-problem.module.js';
-import { GetCategoryController } from './get-category/get-category.controller.js';
-import { GetCategoryService } from './get-category/get-category.service.js';
-
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
@@ -23,7 +20,5 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     LocationModule,
     ReportProblemModule,
   ],
-  controllers: [AppController, GetCategoryController],
-  providers: [AppService, GetCategoryService],
 })
 export class AppModule {}
