@@ -31,6 +31,7 @@ export class AuthController {
     return this.authService.ResetPasswod(token, newPassword);
   }
   @UseGuards(AuthGuard('jwt'))
+  
   @Get('me')
   getMe(@currentUser() user: { 
     id: number, name: string, role: string }) {
