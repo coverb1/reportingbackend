@@ -57,7 +57,7 @@ export class AuthService {
       data: {
         name: dto.name,
         email: dto.email,
-        phone:dto.phone,
+        phone: dto.phone,
         villageId: dto.villageId,
         password: hashedPassword,
         role: Role.CITIZEN,
@@ -75,7 +75,7 @@ export class AuthService {
       user: {
         id: user.id,
         name: user.name,
-        phone:user.phone,
+        phone: user.phone,
         email: user.email,
         role: user.role,
         districtId: user.districtId,
@@ -124,7 +124,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role,
-
+      phone: user.phone,
       district: UserWithLocation?.district?.name,
       sector: UserWithLocation?.sector?.name,
       cell: UserWithLocation?.cell?.name,
