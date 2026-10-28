@@ -5,6 +5,7 @@ import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
 import { LocationModule } from './location/location.module.js';
 import { ReportProblemModule } from './report-problem/report-problem.module.js';
+import { UploadModule } from './uploadImage/upload.module.js';
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
@@ -19,6 +20,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     AuthModule,
     LocationModule,
     ReportProblemModule,
+    UploadModule
   ],
 })
 export class AppModule {}

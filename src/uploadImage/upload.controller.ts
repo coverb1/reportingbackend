@@ -1,8 +1,6 @@
 import {BadRequestException,Controller,Post,UploadedFile,UseInterceptors,} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { randomUUID } from 'crypto';
+
 import type { Express } from 'express';
 import { UploadService } from './upload.service.js';
 
@@ -12,18 +10,18 @@ export class UploadController {
     private readonly uploadService: UploadService,
   ) {}
 
-  @Post('image')
+  @Post('profile')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, callback) => {
-          callback(
-            null,
-            randomUUID() + extname(file.originalname),
-          );
-        },
-      }),
+      // storage: diskStorage({
+      //   destination: './uploads',
+      //   filename: (req, file, callback) => {
+      //     callback(
+      //       null,
+      //       randomUUID() + extname(file.originalname),
+      //     );
+      //   },
+      // }),
 
       limits: {
         fileSize: 5 * 1024 * 1024,
