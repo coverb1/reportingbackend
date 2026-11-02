@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import type { Express } from "express";
 import cloudinary from '../cloudinary.config.js'
+import { PrismaService } from '../prisma.service.js';
 @Injectable()
 
 export class UploadService {
-    async uploadImage(file: Express.Multer.File) {
+    async uploadImage(file: Express.Multer.File,userId:string) {
         if (!file) {
             throw new BadRequestException("please select an image")
         }
@@ -21,6 +22,9 @@ export class UploadService {
                 resource_type: 'image',
             },
         );
+
+// Save the Cloudinary URL in the user's database record
+const user=await this.prisma
 
         return{
             message:"ImageUploaded Well",

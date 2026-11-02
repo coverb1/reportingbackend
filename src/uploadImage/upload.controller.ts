@@ -1,6 +1,7 @@
-import {BadRequestException,Controller,Post,UploadedFile,UseInterceptors,} from '@nestjs/common';
+import {BadRequestException,Controller,Post,UploadedFile,UseInterceptors,UseGuards} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-
+import { AuthGuard } from '@nestjs/passport';
+import { currentUser } from '../auth/me/current-user.decorator.js';
 import type { Express } from 'express';
 import { UploadService } from './upload.service.js';
 
@@ -9,7 +10,7 @@ export class UploadController {
   constructor(
     private readonly uploadService: UploadService,
   ) {}
-
+  @UseGuards(AuthGuard('jwt'))
   @Post('profile')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -45,7 +46,10 @@ export class UploadController {
       },
     }),
   )
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return this.uploadService.uploadImage(file);
+  uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @currentUser() user:{userId:string},
+  ) {
+    return this.uploadService.uploadImage(file,user.userId);
   }
 }

@@ -6,7 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 enum ReportStatus {
   PENDING
   UNDER_REVIEW
@@ -32,7 +31,6 @@ enum ReportCategory {
   PUBLIC_INFRASTRUCTURE
 }
 
-
 // =========================
 // USER ROLES
 // =========================
@@ -46,11 +44,10 @@ enum Role {
   SUPER_ADMIN
 }
 
-
 model User {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   name     String
-  email    String @unique
+  email    String  @unique
   password String
   phone    String?
 
@@ -61,12 +58,12 @@ model User {
   sector   Sectors? @relation(fields: [sectorId], references: [id])
 
   cellId String?
-  cell   Cell? @relation(fields: [cellId], references: [id])
+  cell   Cell?   @relation(fields: [cellId], references: [id])
 
-  villageId String?
-  village   Village? @relation(fields: [villageId], references: [id])
-
-  role Role @default(CITIZEN)
+  villageId    String?
+  village      Village? @relation(fields: [villageId], references: [id])
+  ProfileImage String?
+  role         Role     @default(CITIZEN)
 
   resetToken       String?
   resetTokenExpiry DateTime?
@@ -76,7 +73,6 @@ model User {
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 }
-
 
 model Report {
   id String @id @default(cuid())
@@ -93,7 +89,7 @@ model Report {
 
   // Citizen who created the report
   citizenId String
-  citizen   User @relation(fields: [citizenId], references: [id])
+  citizen   User   @relation(fields: [citizenId], references: [id])
 
   // Location hierarchy
   districtId String
@@ -103,7 +99,7 @@ model Report {
   sector   Sectors @relation(fields: [sectorId], references: [id])
 
   cellId String
-  cell   Cell @relation(fields: [cellId], references: [id])
+  cell   Cell   @relation(fields: [cellId], references: [id])
 
   villageId String
   village   Village @relation(fields: [villageId], references: [id])
@@ -127,7 +123,6 @@ model District {
   updatedAt DateTime @updatedAt
 }
 
-
 // =========================
 // SECTOR
 // =========================
@@ -139,8 +134,8 @@ model Sectors {
 
   district District @relation(fields: [districtId], references: [id])
 
-  cells  Cell[]
-  users  User[]
+  cells   Cell[]
+  users   User[]
   reports Report[]
 
   createdAt DateTime @default(now())
@@ -148,7 +143,6 @@ model Sectors {
 
   @@unique([name, districtId])
 }
-
 
 // =========================
 // CELL
@@ -169,7 +163,6 @@ model Cell {
 
   @@unique([name, SectorId])
 }
-
 
 // =========================
 // VILLAGE
