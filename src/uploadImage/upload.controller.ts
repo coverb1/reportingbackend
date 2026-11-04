@@ -12,6 +12,8 @@ export class UploadController {
   ) {}
   @UseGuards(AuthGuard('jwt'))
   @Post('profile')
+  // @UseInterceptors(FileInterceptor(...)) tells NestJS how to handle a file uploaded by the user.
+// FileInterceptor() Expect a file from the frontend, and look for it under the name file
   @UseInterceptors(
     FileInterceptor('file', {
       // storage: diskStorage({

@@ -28,6 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       sector: palyload.sector,
       cell: palyload.cell,
       village: palyload.village,
+      profileImage: palyload.profileImage
     }
   }
 }

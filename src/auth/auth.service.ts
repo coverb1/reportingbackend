@@ -129,6 +129,7 @@ export class AuthService {
       sector: UserWithLocation?.sector?.name,
       cell: UserWithLocation?.cell?.name,
       village: UserWithLocation?.village?.name,
+      profileImage:user.ProfileImage
     });
 
     // Return token
