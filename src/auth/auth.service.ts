@@ -6,6 +6,7 @@ import { PrismaService } from '../prisma.service.js';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
+import { UpdateProfileDto } from './dto/update-profile.dto.js';
 
 @Injectable()
 export class AuthService {
@@ -86,6 +87,51 @@ export class AuthService {
     };
   }
 
+  // updateProfile
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    if (!user) {
+      throw new UnauthorizedException("user not found")
+    }
+    //chek if  another user using the same email
+    if (dto.email && dto.email !== user.email) {
+      const existingEmail = await this.prisma.user.findUnique({
+        where: {
+          email: dto.email
+        }
+      });
+
+      if (existingEmail) {
+        throw new UnauthorizedException("this email earrldy exist")
+      }
+    }
+
+    //update user imformation 
+    const updateUser = await this.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        name: dto.name,
+        email: dto.email
+      }
+    })
+    return {
+      message: "profile updated well",
+      user: {
+        id: updateUser.id,
+        name: updateUser.name,
+        email: updateUser.email,
+        phone: updateUser.phone,
+        Role: updateUser.role
+      }
+    }
+  }
+
   //Login
   async login(email: string, password: string) {
     // Find user
@@ -129,7 +175,7 @@ export class AuthService {
       sector: UserWithLocation?.sector?.name,
       cell: UserWithLocation?.cell?.name,
       village: UserWithLocation?.village?.name,
-      profileImage:user.ProfileImage
+      profileImage: user.ProfileImage
     });
 
     // Return token

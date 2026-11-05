@@ -2,19 +2,23 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 import { authaconstants } from './auth.constants.js';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PrismaService } from '../prisma.service.js';
 import { JwtStrategy } from './jwt.strategy.js';
+import { PassportModule } from '@nestjs/passport';
+
+
 
 @Module({
   imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: authaconstants.secrete,
-      signOptions: { expiresIn: '1D' }
+    PassportModule.register({
+      defaultStrategy:'jwt',
     }),
+    JwtModule.register({
+    secret: authaconstants.secrete,
+    signOptions: { expiresIn: '1D' }
+  }),
 
     MailerModule.forRoot({
       transport: {
@@ -31,3 +35,7 @@ import { JwtStrategy } from './jwt.strategy.js';
   providers: [AuthService, PrismaService, JwtStrategy],
 })
 export class AuthModule { }
+
+// Passport is a tool that helps NestJS handle authentication.
+// JwtStrategy is responsible for checking whether a JWT token is valid.
+// AuthGuard('jwt') protects your routes.
