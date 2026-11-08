@@ -106,7 +106,7 @@ export class AuthService {
       });
 
       if (existingEmail) {
-        throw new UnauthorizedException("this email earrldy exist")
+        throw new UnauthorizedException("this email earldy exist")
       }
     }
 
@@ -117,7 +117,8 @@ export class AuthService {
       },
       data: {
         name: dto.name,
-        email: dto.email
+        email: dto.email,
+        phone:dto.phone
       }
     })
     return {
