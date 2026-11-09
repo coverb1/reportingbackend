@@ -7,6 +7,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
+import { ForbiddenException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -97,6 +98,40 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException("user not found")
     }
+
+    const now = new Date()
+
+    // chech wether  the user changed anyting
+    const haschanges =
+      (dto.name !== undefined && dto.phone !== user.name) ||
+      (dto.email !== undefined && dto.email !== user.email) ||
+      (dto.phone !== undefined && dto.phone !== user.phone)
+
+    if (!haschanges) {
+      return {
+        message: "no changes were made",
+        user: {
+          id: userId,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          Role: user.role
+        }
+      }
+    }
+
+    // check if a user is still locked
+
+    if (user.profileUpdateCount >= 2 && user.profileLockedInUntill != null && user.profileLockedInUntill > now) {
+      throw new ForbiddenException(`you can not update profileYet. try again later after ${user.profileLockedInUntill.toLocaleString()}`)
+    }
+
+    // resert locker if  the 48 hours has expired 
+    let updateCount = user.profileUpdateCount;
+    if (user.profileLockedInUntill && user.profileLockedInUntill <= now) {
+      updateCount = 0
+    }
+
     //chek if  another user using the same email
     if (dto.email && dto.email !== user.email) {
       const existingEmail = await this.prisma.user.findUnique({
@@ -110,6 +145,15 @@ export class AuthService {
       }
     }
 
+
+    // increaase update counter
+    const newUpdateCounter = updateCount + 1
+    let lockedUntil: Date | null = null;
+
+    if (newUpdateCounter >= 2) {
+      lockedUntil = new Date(now.getTime() + 48 * 60 * 60 * 100)
+    }
+
     //update user imformation 
     const updateUser = await this.prisma.user.update({
       where: {
@@ -118,7 +162,9 @@ export class AuthService {
       data: {
         name: dto.name,
         email: dto.email,
-        phone:dto.phone
+        phone: dto.phone,
+        profileUpdateCount: newUpdateCounter,
+        profileLockedUntil: lockedUntil
       }
     })
     return {

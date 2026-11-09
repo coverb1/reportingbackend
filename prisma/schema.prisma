@@ -51,6 +51,10 @@ model User {
   password String
   phone    String?
 
+// user count how many times edits
+  profileUpdateCount Int @default(0)
+  profileLockedInUntill DateTime?
+
   districtId String?
   district   District? @relation(fields: [districtId], references: [id])
 
