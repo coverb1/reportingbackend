@@ -164,7 +164,7 @@ export class AuthService {
         email: dto.email,
         phone: dto.phone,
         profileUpdateCount: newUpdateCounter,
-        profileLockedUntil: lockedUntil
+        profileLockedInUntill: lockedUntil
       }
     })
     return {
